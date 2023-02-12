@@ -5,22 +5,26 @@ import FoundationNetworking
 
 fileprivate var session = URLSession.shared
 
-public func serverHello(from url:URL) async throws -> String {
+public func serverHello(from url:URL) async throws {
     let (_, response) = try await session.data(from: url)  //TODO: catch the error here
-    if (200...299).contains(response.statusCode) {
-        print("success, \(response.statusCode), \(response.mimeType)")
+    let httpResponse = response as! HTTPURLResponse
+    if (200...299).contains(httpResponse.statusCode) {
+        print("success, \(httpResponse.statusCode), \(String(describing:httpResponse.mimeType))")
     } else {
-        print("Not in success range, \(response.statusCode), \(response.mimeType)")
+        print("Not in success range, \(httpResponse.statusCode), \(String(describing:httpResponse.mimeType))")
         //handleServerError(httpResponse)
     }
+
 }  
 
 public func getData(from url:URL) async throws -> Data {
     let (data, response) = try await session.data(from: url) 
     //What if it's not HTTP? 
-    guard (200...299).contains(response.statusCode) else {
-        print("Not in success range, \(response.statusCode), \(response.mimeType)")
+    let httpResponse = response as! HTTPURLResponse
+    guard (200...299).contains(httpResponse.statusCode) else {
+        print("Not in success range, \(httpResponse.statusCode), \(String(describing:httpResponse.mimeType))")
         //handleServerError(httpResponse)
+        throw APIngError("getData: No data")
     }
     return data
 }
