@@ -14,6 +14,13 @@
         touch .env
         swift run
         git add .
+        git commit -m "hello project"
+        #I then use the built in feature of VSCode to make remote & add as origin but there is a cli https://cli.github.com/manual/gh_repo_create
+        #gh repo create [<name>] [flags]
+        #git remote add origin [repo-url]  #<- will also create
+        #git remote set-url origin [repo-url] #<- only sets if exists
+        #git remote -v #checks to see if it worked
+        
         ```
 
 #### .gitignore
