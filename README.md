@@ -15,12 +15,13 @@
         swift run
         git add .
         git commit -m "hello project"
-        #I then use the built in feature of VSCode to make remote & add as origin but there is a cli https://cli.github.com/manual/gh_repo_create
-        #gh repo create [<name>] [flags]
-        #git remote add origin [repo-url]  #<- will also create
-        #git remote set-url origin [repo-url] #<- only sets if exists
+        # Options for making a remote:
+        # https://cli.github.com/manual/gh_repo_create  (brew install gh)
+        #gh repo create [<name>] --public
+        #git remote add origin [repo-url]  #<- links an existing repo to git
         #git remote -v #checks to see if it worked
-        
+        #Potential GOTCHAs - https://docs.github.com/en/authentication/troubleshooting-ssh/error-permission-denied-publickey#make-sure-you-have-a-key-that-is-being-used
+        git push -u origin main
         ```
 
 #### .gitignore
