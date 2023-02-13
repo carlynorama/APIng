@@ -31,14 +31,16 @@ Go to http://localhost:8080 and see the call show up there, run commands from he
 
 ### Checking Parsing
 
+Does it parse? Service that will reply with json about what it thinks it got back semantically, rather than just a reflection. 
+
 - https://httpbin.org/post 
 
 ### cURL Examples To Crib From 
 
-cURL commands sent to NetCat and httpbin can be very instructive on what your code should be doing. e.g.
+cURL commands sent to BOTH NetCat and httpbin can be very instructive on what your code should be doing. 
 
-- `curl -s -X POST 'https://httpbin.org/post' --form foo="bar"` 
-- `curl -s -X POST http://localhost:8080 --form file="@very_small_test.png"` (sends file as attachment)
+- `curl -s -X POST 'https://httpbin.org/post' --form foo="bar" --form file="@very_small_test.png"`  will let you see the form data as sent.
+- `curl -s -X POST http://localhost:8080 --form foo="bar" --form file="@very_small_test.png"` will let you see how a server will typically parse it. Note that the image is parsed as an attachment NOT form data. 
 
 ## New Project SetUp
 
