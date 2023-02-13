@@ -33,10 +33,12 @@ Go to http://localhost:8080 and see the call show up there, run commands from he
 
 - https://httpbin.org/post 
 
-### Examples To Crib From 
+### cURL Examples To Crib From 
 
-- `curl -s -X POST 'https://httpbin.org/post' --form foo="bar"`
-- `curl -s -X POST http://localhost:8080 --form file="@very_small_test.png"`
+cURL commands sent to NetCat and httpbin can be very instructive on what your code should be doing. e.g.
+
+- `curl -s -X POST 'https://httpbin.org/post' --form foo="bar"` 
+- `curl -s -X POST http://localhost:8080 --form file="@very_small_test.png"` (sends file as attachment)
 
 ## New Project SetUp
 
