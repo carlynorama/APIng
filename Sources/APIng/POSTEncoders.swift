@@ -61,7 +61,7 @@ func appendDataField(data:Data, label key: String, dataToAdd: Data, mimeType: St
 
 func appendTerminationBoundary(data:Data, boundary:String) -> Data {
     var copy = data
-    let boundaryData = "--\(boundary)\r\n".data(using: .utf8)
+    let boundaryData = "--\(boundary)--".data(using: .utf8)
     copy.append(boundaryData!) //TODO throw instead
     return copy
 }
