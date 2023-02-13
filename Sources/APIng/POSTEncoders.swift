@@ -1,3 +1,7 @@
+//ACTUAL SPEC
+//https://www.rfc-editor.org/rfc/rfc7578
+
+
 import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking

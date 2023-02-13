@@ -1,4 +1,9 @@
 
+## References
+
+- Form Data Spec: https://www.rfc-editor.org/rfc/rfc7578
+- https://html.spec.whatwg.org/multipage/forms.html
+
 ## Testing Calls
 
 ### Using [NetCat](https://en.wikipedia.org/wiki/Netcat)
@@ -15,9 +20,9 @@
         # You might have to ^C a few times to catch it during a sleep
         while [ 1 ] ; do ; netcat -l -p 8080 ; sleep 1 ; done
         ```
-Go to http://localhost:8080
+Go to http://localhost:8080 and see the call show up there, run commands from here, etc. NetCat does not respond so make sure to include timeouts.
 
-### New Project SetUp
+## New Project SetUp
 
         ```zsh
         mkdir APIng
