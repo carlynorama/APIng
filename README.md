@@ -1,7 +1,23 @@
 
+## Testing Calls
 
+### Using [NetCat](https://en.wikipedia.org/wiki/Netcat)
 
-### Start Up
+        ```zsh
+        # Start up netcat on port 8080 
+        nc -l -p 8080 
+        # if that does not work try, but that means calls will only resolve at http://localhost:8080
+        nc -l localhost 8080  
+        # or 
+        brew install netcat
+        netcat -l -p 8080
+        # live dangerously if you get sick of restarting it
+        # You might have to ^C a few times to catch it during a sleep
+        while [ 1 ] ; do ; netcat -l -p 8080 ; sleep 1 ; done
+        ```
+Go to http://localhost:8080
+
+### New Project SetUp
 
         ```zsh
         mkdir APIng

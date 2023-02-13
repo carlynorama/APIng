@@ -28,9 +28,14 @@ public struct APIng {
     static let exampleStatusUpdate_uqi = URLQueryItem(name:"status", value:"I am a new status to post!")
     static let exampleStatusUpdate_dict = ["status":"I am a new dictionary status to post"]
     static let exampleStatusUpdate_dictCSR = ["status": 3.1415926535897932384]
+    static let exampleMultiPartDict:Dictionary<String, CustomStringConvertible> = [
+        "twenty_pi": 3.1415926535897932384,
+        "preamble": "When in the course of human events...",
+        "shoop": "HoopdiDoop",
+        ]
 
 
-    public static func main() {
+    public static func main() async throws  {
         print(shared.text)
         let pathURL = try? urlFromPath(host: host, path: apiBase).absoluteString
         let pathFromComponents = try? urlFromPathComponents(host:host, components:[apiBase, "v1", "timelines/public"]).absoluteString
@@ -58,6 +63,19 @@ public struct APIng {
         print("\(urlAssembler_3.absoluteString)")
         print("\(pathAssembler_1)")
         print("\(pathAssembler_2)")
+        print("---")
+
+        // let testingGetURL = urlAssembler(baseString: "http://localhost:8080", "api/v1")!
+        // try await serverHello(from: testingGetURL)
+        
+        let testingPostURL = urlAssembler(baseString: "http://localhost:8080", "api/v1")!
+
+        //try await post_URLEncoded_uploadFrom(baseUrl:testingPostURL, formData:exampleStatusUpdate_dict)
+       // try await post_URLEncoded_manualBody(baseUrl:testingPostURL, formData:exampleStatusUpdate_dict)
+
+       //try await post_FormBody_uploadFrom(baseUrl:testingPostURL, formData:exampleMultiPartDict) 
+       try await post_FormBody_manualBody(baseUrl:testingPostURL, formData:exampleMultiPartDict)
+        
 
     }
 }

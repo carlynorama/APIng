@@ -5,8 +5,9 @@ import FoundationNetworking
 
 fileprivate var session = URLSession.shared
 
-public func serverHello(from url:URL) async throws {
-    let (_, response) = try await session.data(from: url)  //TODO: catch the error here
+public func serverHello(from url:URL, timeOut:TimeInterval = 10) async throws {
+    let request = URLRequest(url: url, timeoutInterval: timeOut)
+    let (_, response) = try await session.data(for: request)  //TODO: catch the error here
     let httpResponse = response as! HTTPURLResponse
     if (200...299).contains(httpResponse.statusCode) {
         print("success, \(httpResponse.statusCode), \(String(describing:httpResponse.mimeType))")
@@ -17,9 +18,13 @@ public func serverHello(from url:URL) async throws {
 
 }  
 
-public func getData(from url:URL) async throws -> Data {
+public func getData(from url:URL, timeOut:TimeInterval? = 10) async throws -> Data {
+    var request = URLRequest(url: url)
+    if let timeOut { request.timeoutInterval = timeOut }
+    
     let (data, response) = try await session.data(from: url) 
-    //What if it's not HTTP? 
+    
+    //TODO: What if it's not HTTP? 
     let httpResponse = response as! HTTPURLResponse
     guard (200...299).contains(httpResponse.statusCode) else {
         print("Not in success range, \(httpResponse.statusCode), \(String(describing:httpResponse.mimeType))")
@@ -29,8 +34,19 @@ public func getData(from url:URL) async throws -> Data {
     return data
 }
 
-public func getRawString(from url:URL, encoding:String.Encoding = .utf8) async throws -> String {
-    let (data, _) = try await session.data(from: url)
+public func getRawString(from url:URL, encoding:String.Encoding = .utf8, timeOut:TimeInterval? = nil) async throws -> String {
+    var request = URLRequest(url: url)
+    if let timeOut { request.timeoutInterval = timeOut }
+    
+    let (data, response) = try await session.data(from: url) 
+    
+    //TODO: What if it's not HTTP? 
+    let httpResponse = response as! HTTPURLResponse
+    guard (200...299).contains(httpResponse.statusCode) else {
+        print("Not in success range, \(httpResponse.statusCode), \(String(describing:httpResponse.mimeType))")
+        //handleServerError(httpResponse)
+        throw APIngError("getData: No data")
+    }
     guard let string = String(data: data, encoding: encoding) else {
         throw APIngError("Got data, couldn't make a string with \(encoding)")
     }
@@ -41,18 +57,6 @@ func getObject<T:Codable>(ofType:T.Type, fromURL url:URL) async -> T? {
     do {
         let result = try await getData(from: url).asValue(ofType: ofType)
         //print(result)
-        return result
-    } catch {
-        print(error)
-    }
-    return nil
-}
-
-//MARK: Generic New Type of JSON printer
-func getJSON(from url:URL) async -> String? {
-    do {
-        let result = try await getRawString(from: url, encoding: .utf8)
-        print(result)
         return result
     } catch {
         print(error)
