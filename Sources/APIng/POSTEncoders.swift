@@ -8,6 +8,58 @@ import FoundationNetworking
 #endif
 
 //MARK: URL Encoding
+func makeDictionary(from itemToEncode:Any) -> [String:String]? {
+    let mirror = Mirror(reflecting: itemToEncode)
+    var dictionary:[String:String] = [:]
+
+    for child in mirror.children  {
+        if let key:String = child.label {
+            // print("key: \(key), value: \(child.value)")
+            // print(child.value)
+            // print(String(describing: child.value))
+            if child.value is ExpressibleByNilLiteral  {
+                let typeDescription = object_getClass(child.value)?.description() ?? ""
+                if !typeDescription.contains("Null") && !typeDescription.contains("Empty") {
+                    let (_, some) = Mirror(reflecting: child.value).children.first!
+                    //print(some)
+                    dictionary[key] = String(describing: some)
+                }
+            } else {
+                dictionary[key] = String(describing: child.value)
+            }
+        } 
+        else { print("No key.") }
+    }
+    return dictionary
+}
+
+
+    //Look at QueryEncoder for other clean up tasks.
+func makeDictionary(fromEncodable itemToEncode:Encodable) -> [String:String] {
+    let encoder = JSONEncoder()
+    func encode<T>(_ value: T) throws -> [String: Any] where T : Encodable {
+        let data = try encoder.encode(value)
+        return try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String: Any]
+    }
+    guard let dictionary = try? encode(itemToEncode) else {
+        //print("got nothing")
+        return [:]
+    }
+    var cleanedUp:[String:String] = [:]
+    for (key, value) in dictionary {
+        var stringValue = "\(value)"
+        if stringValue == "(\n)" { stringValue = "" }
+        if stringValue.hasPrefix("(") { stringValue = stringValue.trimmingCharacters(in: CharacterSet(charactersIn: "()\n"))}
+        //print(stringValue)
+        if !stringValue.isEmpty  {
+            cleanedUp[key] = "\(stringValue)"
+        }
+    }
+    
+    return cleanedUp
+}
+
+
 
 func makeURLEncodedString(formItems:Dictionary<String, CustomStringConvertible>) throws -> String {
     var urlQueryItems:[URLQueryItem] = []

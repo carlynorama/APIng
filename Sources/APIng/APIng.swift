@@ -119,23 +119,59 @@ public struct APIng {
     //---------------- CONFIRMED - UPLOAD MEDIA FILE WORKS (BOTH METHODS)
     // Media uploads will fail if fileNames are not included on Form Data. 
 
-        let mediaEndpoint = Endpoint(path:"/api/v2/media", queryItems: [])
-        //let mediaEndpointURL = urlAssembler("http://localhost:8080", mediaEndpoint.path)!
-        //let mediaEndpointURL = URL(string: "https://httpbin.org/post")!
-        let mediaEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: mediaEndpoint)
-        print("trying \(mediaEndpointURL.absoluteString)")
+    //     let mediaEndpoint = Endpoint(path:"/api/v2/media", queryItems: [])
+    //     //let mediaEndpointURL = urlAssembler("http://localhost:8080", mediaEndpoint.path)!
+    //     //let mediaEndpointURL = URL(string: "https://httpbin.org/post")!
+    //     let mediaEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: mediaEndpoint)
+    //     print("trying \(mediaEndpointURL.absoluteString)")
 
-        //let fileAttachment =  try loadDataFromFile(path: "string_load_test.txt")
-        let fileAttachment =  try loadDataFromFile(path: "small_test.png", limitTypes: [.image])
+    //     //let fileAttachment =  try loadDataFromFile(path: "string_load_test.txt")
+    //     let fileAttachment =  try loadDataFromFile(path: "small_test.png", limitTypes: [.image])
 
 
-        let exampleMediaAttachmentConfig = [
-                "description":"This is a pretty picture. \(Date.now.ISO8601Format())"
-        ]
+    //     let exampleMediaAttachmentConfig = [
+    //             "description":"This is a pretty picture. \(Date.now.ISO8601Format())"
+    //     ]
 
-        let (boundary, body) = try makeBodyData(stringItems: exampleMediaAttachmentConfig, dataAttachments: ["file" : fileAttachment])
+    //     let (boundary, body) = try makeBodyData(stringItems: exampleMediaAttachmentConfig, dataAttachments: ["file" : fileAttachment])
 
-        //try await post_FormBody_uploadFrom(baseUrl: mediaEndpointURL, dataToSend: body, boundary: boundary, withAuth:true)
-        try await post_FormBody_manualBody(baseUrl:mediaEndpointURL, dataToSend: body, boundary: boundary, withAuth:true)
-    }
+    //     //try await post_FormBody_uploadFrom(baseUrl: mediaEndpointURL, dataToSend: body, boundary: boundary, withAuth:true)
+    //     try await post_FormBody_manualBody(baseUrl:mediaEndpointURL, dataToSend: body, boundary: boundary, withAuth:true)
+
+    // 
+
+        //---------------- TESTING - Dictionary Conversion
+
+        struct TestEncodableStruct:Encodable {
+            let hello = "World"
+            let meaningOfLife = 42
+            let optHello:String? = "World"
+            let optMeaningOfLife:Int? = nil
+        }
+
+        struct TestStruct {
+            let hello = "World".data(using: .utf8)
+            let meaningOfLife = 42
+            let optHello:URL? = URL(string: "http://example.com")
+            let optMeaningOfLife:Int? = nil
+        }
+
+        if let newDict = makeDictionary(from: TestStruct()) {
+        print(String(describing:newDict))
+        for (key, value) in newDict {
+            print(key, value)
+        }
+        } else {
+            print("could not make a dictionary")
+        }
+
+        let otherDict = makeDictionary(fromEncodable: TestEncodableStruct()) 
+        print(String(describing:otherDict))
+        for (key, value) in otherDict {
+            print(key, value)
+        }
+
+ 
+
+     }
 }
