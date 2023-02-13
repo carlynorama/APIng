@@ -8,7 +8,7 @@ public struct Endpoint {
     let queryItems: [URLQueryItem]
     
     public init(path: String, queryItems: [URLQueryItem]) {
-        self.path = path
+        self.path = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         self.queryItems = queryItems
     }
 }
@@ -76,7 +76,7 @@ func urlFromEndpoint(scheme:String = "https", host:String, apiBase:String = "", 
     components.host = host
     if let port  { components.port = port }
 
-    components.path = assemblePath([apiBase, endpoint.path])
+    components.path = assemblePath([apiBase, endpoint.path], prependSeparator: false)
 
     if !endpoint.queryItems.isEmpty {
         components.queryItems = endpoint.queryItems

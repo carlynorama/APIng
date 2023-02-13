@@ -36,6 +36,7 @@ public struct APIng {
 
 
     public static func main() async throws  {
+        
         print(shared.text)
         let pathURL = try? urlFromPath(host: host, path: apiBase).absoluteString
         let pathFromComponents = try? urlFromPathComponents(host:host, components:[apiBase, "v1", "timelines/public"]).absoluteString
@@ -67,15 +68,52 @@ public struct APIng {
 
         // let testingGetURL = urlAssembler(baseString: "http://localhost:8080", "api/v1")!
         // try await serverHello(from: testingGetURL)
-        
-        let testingPostURL = urlAssembler(baseString: "http://localhost:8080", "api/v1")!
+
+        //let testingPostURL = urlAssembler(baseString: "http://localhost:8080", "api/v1")!
 
         //try await post_URLEncoded_uploadFrom(baseUrl:testingPostURL, formData:exampleStatusUpdate_dict)
-       // try await post_URLEncoded_manualBody(baseUrl:testingPostURL, formData:exampleStatusUpdate_dict)
+        // try await post_URLEncoded_manualBody(baseUrl:testingPostURL, formData:exampleStatusUpdate_dict)
 
-       //try await post_FormBody_uploadFrom(baseUrl:testingPostURL, formData:exampleMultiPartDict) 
-       try await post_FormBody_manualBody(baseUrl:testingPostURL, formData:exampleMultiPartDict)
+        //try await post_FormBody_uploadFrom(baseUrl:testingPostURL, formData:exampleMultiPartDict) 
+        //try await post_FormBody_manualBody(baseUrl:testingPostURL, formData:exampleMultiPartDict)
+
+
         
 
+        try DotEnv.loadDotEnv()
+
+        //---------------- CONFIRMED - GET TIMELINE WORKS
+        // let timeLineEndpoint = Endpoint(path: "/api/v1/timelines/public", queryItems: [URLQueryItem(name: "limit", value: "5")])
+        // let timelineURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: timeLineEndpoint)
+        // print(timelineURL.absoluteString)
+        // let result = try await getRawString(from: timelineURL)
+        // print(result)
+
+        //---------------- CONFIRMED - NEW STATUS AS URLENCODED WORKS (BOTH METHODS)
+        // let statusEndpoint = Endpoint(path:"/api/v1/statuses", queryItems: [])
+        // //let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
+        // let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
+        // print("trying \(statusEndpointURL.absoluteString)")
+
+        // let exampleBasicStatus = [
+        //     "status":"This is a really really interesting message. \(Date.now.ISO8601Format())"
+        // ]
+
+        //try await post_URLEncoded_uploadFrom(baseUrl: statusEndpointURL, formData: exampleBasicStatus, withAuth:true)
+        //try await post_URLEncoded_manualBody(baseUrl: statusEndpointURL, formData: exampleBasicStatus, withAuth:true)
+        
+        //---------------- NOW TESTING - NEW STATUS AS URLENCODED WORKS
+    
+        let statusEndpoint = Endpoint(path:"/api/v1/statuses", queryItems: [])
+        let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
+        //let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
+        print("trying \(statusEndpointURL.absoluteString)")
+
+        let exampleBasicStatus = [
+            "status":"This is a really really interesting message. \(Date.now.ISO8601Format())"
+        ]
+
+        //try await post_FormBody_uploadFrom(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
+        //try await post_FormBody_manualBody(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
     }
 }
