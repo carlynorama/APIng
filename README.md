@@ -3,8 +3,15 @@
 
 - Form Data Spec: https://www.rfc-editor.org/rfc/rfc7578
 - https://html.spec.whatwg.org/multipage/forms.html
+- https://www.digitalocean.com/community/tutorials/workflow-resizing-images-with-imagemagick
 
 ## Testing Calls
+
+### Making Tiny Test Images
+
+- `brew install imagemagick` if necessary
+- `convert original.png -resize 10x10^ -gravity center -extent 5x5 new.png`
+- e.g. `convert small_test.png -resize 10x10^ -gravity center -extent 5x5 very_small_test.png`
 
 ### Using [NetCat](https://en.wikipedia.org/wiki/Netcat)
 
@@ -21,6 +28,15 @@
         while [ 1 ] ; do ; netcat -l -p 8080 ; sleep 1 ; done
         ```
 Go to http://localhost:8080 and see the call show up there, run commands from here, etc. NetCat does not respond so make sure to include timeouts.
+
+### Checking Parsing
+
+- https://httpbin.org/post 
+
+### Examples To Crib From 
+
+- `curl -s -X POST 'https://httpbin.org/post' --form foo="bar"`
+- `curl -s -X POST http://localhost:8080 --form file="@very_small_test.png"`
 
 ## New Project SetUp
 

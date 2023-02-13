@@ -102,34 +102,40 @@ public struct APIng {
         //try await post_URLEncoded_uploadFrom(baseUrl: statusEndpointURL, formData: exampleBasicStatus, withAuth:true)
         //try await post_URLEncoded_manualBody(baseUrl: statusEndpointURL, formData: exampleBasicStatus, withAuth:true)
         
-    //---------------- HALT TESTING - NEW STATUS AS FORM DATA DOES NOT WORK
+    //---------------- CONFIRMED - NEW STATUS AS FORM DATA WORKS (BOTH METHODS)
     
-        let statusEndpoint = Endpoint(path:"/api/v1/statuses", queryItems: [])
-        //let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
-        let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
-        print("trying \(statusEndpointURL.absoluteString)")
+        // let statusEndpoint = Endpoint(path:"/api/v1/statuses", queryItems: [])
+        // //let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
+        // let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
+        // print("trying \(statusEndpointURL.absoluteString)")
 
-        let exampleBasicStatus = [
-            "status":"This is a really really interesting message. \(Date.now.ISO8601Format())"
-        ]
+        // let exampleBasicStatus = [
+        //     "status":"This is a really really interesting message. \(Date.now.ISO8601Format())"
+        // ]
 
-        try await post_FormBody_uploadFrom(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
+        //try await post_FormBody_uploadFrom(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
         //try await post_FormBody_manualBody(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
 
-    //---------------- NOW TESTING - UPLOAD MEDIA FILE
-        // //let url = Bundle.main.url(forResource:"small_test", withExtension: ".png")!
-        // // let url = URL(string:"/Users/carlynorama/Developer/GitHub/APIng/small_test.png")
-        // // let contents = try Data(contentsOf: url!)
-        // let url = URL(fileURLWithPath: "/Users/carlynorama/Developer/GitHub/APIng/small_test.png")
-        // let contents =  try Data(contentsOf: url)
-        // if contents.isEmpty {
-        //     print("nope")
-        // } else {
-        //     print("yup")
-        // }
-        // let message = try String(contentsOfFile: "/Users/carlynorama/Developer/GitHub/APIng/string_load_test.txt")
-        // print(message)
-        // //let (name, data, mime) = try loadFile(url: url!)
-        // //print("name:\(name), mime:\(mime)")
+    //---------------- CONFIRMED - UPLOAD MEDIA FILE WORKS (BOTH METHODS)
+    // Media uploads will fail if fileNames are not included on Form Data. 
+
+        let mediaEndpoint = Endpoint(path:"/api/v2/media", queryItems: [])
+        //let mediaEndpointURL = urlAssembler("http://localhost:8080", mediaEndpoint.path)!
+        //let mediaEndpointURL = URL(string: "https://httpbin.org/post")!
+        let mediaEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: mediaEndpoint)
+        print("trying \(mediaEndpointURL.absoluteString)")
+
+        //let fileAttachment =  try loadDataFromFile(path: "string_load_test.txt")
+        let fileAttachment =  try loadDataFromFile(path: "small_test.png", limitTypes: [.image])
+
+
+        let exampleMediaAttachmentConfig = [
+                "description":"This is a pretty picture. \(Date.now.ISO8601Format())"
+        ]
+
+        let (boundary, body) = try makeBodyData(stringItems: exampleMediaAttachmentConfig, dataAttachments: ["file" : fileAttachment])
+
+        //try await post_FormBody_uploadFrom(baseUrl: mediaEndpointURL, dataToSend: body, boundary: boundary, withAuth:true)
+        try await post_FormBody_manualBody(baseUrl:mediaEndpointURL, dataToSend: body, boundary: boundary, withAuth:true)
     }
 }

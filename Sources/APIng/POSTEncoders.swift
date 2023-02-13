@@ -47,6 +47,22 @@ func makeBodyData(formItems:Dictionary<String, CustomStringConvertible>) throws 
     return (boundary, bodyData)
 }
 
+//Media uploads will fail if fileName is not included, regardless of MIME/Type. 
+func makeBodyData(stringItems:Dictionary<String, CustomStringConvertible>, dataAttachments:[String:(fileName:String, data:Data, mimeType:String)]) throws -> (boundary:String, body:Data) {
+    let boundary = "Boundary--\(UUID().uuidString)"
+    var bodyData = Data()
+    for (key, value) in stringItems {
+        bodyData = try appendTextField(data: bodyData, label: key, value: String(describing: value), boundary: boundary)
+    }
+
+    for (key, value) in dataAttachments {
+        bodyData = try appendDataField(data: bodyData, label: key, dataToAdd: value.data, mimeType: value.mimeType, fileName: value.fileName, boundary: boundary)
+    }
+
+    bodyData = appendTerminationBoundary(data: bodyData, boundary: boundary)
+    return (boundary, bodyData)
+}
+
 //TODO: All this copying... inout instead? make extension? 
 
 func appendTextField(data:Data, label key: String, value: String, boundary:String) throws -> Data {
@@ -56,9 +72,9 @@ func appendTextField(data:Data, label key: String, value: String, boundary:Strin
     return copy
 }
 
-func appendDataField(data:Data, label key: String, dataToAdd: Data, mimeType: String, boundary:String) throws -> Data {
+func appendDataField(data:Data, label key: String, dataToAdd: Data, mimeType: String, fileName:String? = nil, boundary:String) throws -> Data {
     var copy = data
-    let formFieldData = try dataFormField(label:key, data: dataToAdd, mimeType: mimeType, boundary:boundary)
+    let formFieldData = try dataFormField(label:key, data: dataToAdd, mimeType: mimeType, fileName:fileName, boundary:boundary)
     copy.append(formFieldData)
     return copy
 }
@@ -84,11 +100,16 @@ func textFormField(label key: String, value: String, boundary:String) throws -> 
     return fieldData!
 }
 
-func dataFormField(label key: String, data: Data, mimeType: String, boundary:String) throws -> Data {
+func dataFormField(label key: String, data: Data, mimeType: String, fileName:String? = nil, boundary:String) throws -> Data {
     var fieldData = Data()
 
     try fieldData.append("--\(boundary)\r\n")
-    try fieldData.append("Content-Disposition: form-data; name=\"\(key)\"\r\n")
+    if let fileName {
+        try fieldData.append("Content-Disposition: form-data; name=\"\(key)\"; filename=\"\(fileName)\";\r\n")
+    } else {
+        try fieldData.append("Content-Disposition: form-data; name=\"\(key)\"\r\n")
+    }
+    
     try fieldData.append("Content-Type: \(mimeType)\r\n")
     try fieldData.append("\r\n")
     fieldData.append(data)
