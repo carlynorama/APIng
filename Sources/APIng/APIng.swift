@@ -82,14 +82,14 @@ public struct APIng {
 
         try DotEnv.loadDotEnv()
 
-        //---------------- CONFIRMED - GET TIMELINE WORKS
+    //---------------- CONFIRMED - GET TIMELINE WORKS
         // let timeLineEndpoint = Endpoint(path: "/api/v1/timelines/public", queryItems: [URLQueryItem(name: "limit", value: "5")])
         // let timelineURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: timeLineEndpoint)
         // print(timelineURL.absoluteString)
         // let result = try await getRawString(from: timelineURL)
         // print(result)
 
-        //---------------- CONFIRMED - NEW STATUS AS URLENCODED WORKS (BOTH METHODS)
+    //---------------- CONFIRMED - NEW STATUS AS URLENCODED WORKS (BOTH METHODS)
         // let statusEndpoint = Endpoint(path:"/api/v1/statuses", queryItems: [])
         // //let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
         // let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
@@ -102,18 +102,34 @@ public struct APIng {
         //try await post_URLEncoded_uploadFrom(baseUrl: statusEndpointURL, formData: exampleBasicStatus, withAuth:true)
         //try await post_URLEncoded_manualBody(baseUrl: statusEndpointURL, formData: exampleBasicStatus, withAuth:true)
         
-        //---------------- NOW TESTING - NEW STATUS AS URLENCODED WORKS
+    //---------------- HALT TESTING - NEW STATUS AS FORM DATA DOES NOT WORK
     
         let statusEndpoint = Endpoint(path:"/api/v1/statuses", queryItems: [])
-        let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
-        //let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
+        //let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
+        let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
         print("trying \(statusEndpointURL.absoluteString)")
 
         let exampleBasicStatus = [
             "status":"This is a really really interesting message. \(Date.now.ISO8601Format())"
         ]
 
-        //try await post_FormBody_uploadFrom(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
+        try await post_FormBody_uploadFrom(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
         //try await post_FormBody_manualBody(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
+
+    //---------------- NOW TESTING - UPLOAD MEDIA FILE
+        // //let url = Bundle.main.url(forResource:"small_test", withExtension: ".png")!
+        // // let url = URL(string:"/Users/carlynorama/Developer/GitHub/APIng/small_test.png")
+        // // let contents = try Data(contentsOf: url!)
+        // let url = URL(fileURLWithPath: "/Users/carlynorama/Developer/GitHub/APIng/small_test.png")
+        // let contents =  try Data(contentsOf: url)
+        // if contents.isEmpty {
+        //     print("nope")
+        // } else {
+        //     print("yup")
+        // }
+        // let message = try String(contentsOfFile: "/Users/carlynorama/Developer/GitHub/APIng/string_load_test.txt")
+        // print(message)
+        // //let (name, data, mime) = try loadFile(url: url!)
+        // //print("name:\(name), mime:\(mime)")
     }
 }
