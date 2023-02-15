@@ -170,6 +170,16 @@ func dataFormField(label key: String, data: Data, mimeType: String, fileName:Str
     return fieldData as Data
 }
 
+//Standard for URLEncoding. 
+func arrayToQueryItems(baseStringForKey:String, array:[CustomStringConvertible]) -> [URLQueryItem] {
+    var queries:[URLQueryItem] = []
+    queries.reserveCapacity(array.count)
+    for item in array {
+        queries.append(URLQueryItem(name: "\(baseStringForKey)[]", value: String(describing: item)))
+    }
+    return queries
+}
+
 extension Data {
     mutating func append(_ string: String, using encoding: String.Encoding = .utf8) throws {
         if let data = string.data(using: encoding) {
