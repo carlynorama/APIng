@@ -140,37 +140,41 @@ public struct APIng {
 
     // 
 
-        //---------------- TESTING - Dictionary Conversion
+        //---------------- CONFIRMED WORKS - Dictionary Conversion
 
-        struct TestEncodableStruct:Encodable {
-            let hello = "World"
-            let meaningOfLife = 42
-            let optHello:String? = "World"
-            let optMeaningOfLife:Int? = nil
-        }
+        // struct TestEncodableStruct:Encodable {
+        //     let hello = "World"
+        //     let meaningOfLife = 42
+        //     let optHello:String? = "World"
+        //     let optMeaningOfLife:Int? = nil
+        // }
 
-        struct TestStruct {
-            let hello = "World".data(using: .utf8)
-            let meaningOfLife = 42
-            let optHello:URL? = URL(string: "http://example.com")
-            let optMeaningOfLife:Int? = nil
-        }
+        // struct TestStruct {
+        //     let hello = "World".data(using: .utf8)
+        //     let meaningOfLife = 42
+        //     let optHello:URL? = URL(string: "http://example.com")
+        //     let optMeaningOfLife:Int? = nil
+        // }
 
-        if let newDict = makeDictionary(from: TestStruct()) {
-        print(String(describing:newDict))
-        for (key, value) in newDict {
-            print(key, value)
-        }
-        } else {
-            print("could not make a dictionary")
-        }
+        // if let newDict = makeDictionary(from: TestStruct()) {
+        // print(String(describing:newDict))
+        // for (key, value) in newDict {
+        //     print(key, value)
+        // }
+        // } else {
+        //     print("could not make a dictionary")
+        // }
 
-        let otherDict = makeDictionary(fromEncodable: TestEncodableStruct()) 
-        print(String(describing:otherDict))
-        for (key, value) in otherDict {
-            print(key, value)
-        }
+        // let otherDict = makeDictionary(fromEncodable: TestEncodableStruct()) 
+        // print(String(describing:otherDict))
+        // for (key, value) in otherDict {
+        //     print(key, value)
+        // }
 
+        // TESITING - RECEiVE EVENT STREAMS
+
+        //Yes, receives stream. 
+        try await streamReceiverTest(streamURL:URL(string:"https://mastodon.social/api/v1/streaming/public")!, session:URLSession.shared) 
  
 
      }
