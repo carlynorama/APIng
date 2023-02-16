@@ -105,16 +105,16 @@ public struct APIng {
     //---------------- CONFIRMED - NEW STATUS AS FORM DATA WORKS (BOTH METHODS)
     
         // let statusEndpoint = Endpoint(path:"/api/v1/statuses", queryItems: [])
-        // //let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
-        // let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
+        // let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
+        // //let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
         // print("trying \(statusEndpointURL.absoluteString)")
 
         // let exampleBasicStatus = [
         //     "status":"This is a really really interesting message. \(Date.now.ISO8601Format())"
         // ]
 
-        //try await post_FormBody_uploadFrom(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
-        //try await post_FormBody_manualBody(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
+        // try await post_FormBody_uploadFrom(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
+        // //try await post_FormBody_manualBody(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
 
     //---------------- CONFIRMED - UPLOAD MEDIA FILE WORKS (BOTH METHODS)
     // Media uploads will fail if fileNames are not included on Form Data. 
@@ -174,8 +174,9 @@ public struct APIng {
         // TESITING - RECEiVE EVENT STREAMS
 
         //Yes, receives stream. 
-        try await streamReceiverTest(streamURL:URL(string:"https://mastodon.social/api/v1/streaming/public")!, session:URLSession.shared) 
- 
+       // try await streamReceiverTest(streamURL:URL(string:"https://httpbin.org/get")!, session:URLSession.shared) 
+        try await streamReceiverTestWithManualHeader(streamURL:URL(string:"https://mastodon.social/api/v1/streaming/public")!, session:URLSession.shared) 
+        // try await streamReceiverTestWithManualHeader(streamURL:URL(string:"https://httpbin.org/get")!, session:URLSession.shared) 
 
      }
 }
