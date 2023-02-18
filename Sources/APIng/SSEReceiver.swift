@@ -3,6 +3,92 @@ import Foundation
 import FoundationNetworking
 #endif
 
+
+
+
+
+struct SSEStreamEvent {
+    let type:String
+    let data:Data
+
+    var description:String {
+        "Event of type:\(type) with \(data.count) bytes"
+    }
+}
+
+class SSEStreamListener {
+    private let url: URL
+    private let session: URLSession
+
+    public private(set) var accumulator:[SSEStreamEvent] = []
+    private var dataTask:URLSessionDataTask?
+    private var task:Task<Void, Error>?
+    private var isListening:Bool = false
+
+    init(url:URL, urlSession:URLSession) {
+        self.url = url
+        self.session = urlSession
+    }
+
+
+    func startListening() throws  {
+         task = Task { try await openSSEStream() }
+        // try await task?.value
+    }
+
+    func stopListening() throws {
+        self.cancel()
+    }
+
+    private func cancel() {
+        dataTask?.cancel()
+        task?.cancel()
+        dataTask = nil 
+    }
+
+    struct SSELine:Codable {
+        let label:String
+        let content:Data
+
+        init(_ candidateString:String) async throws {
+            let splitResult = candidateString.split(separator: ":", maxSplits: 1).map(String.init)
+            self.label = splitResult[0]
+            guard let data = splitResult[1].data(using: .utf8) else {
+                throw APIngError("SSELine init couldn't make data from string")
+            }
+            self.content = data
+        }
+    }
+
+    private func openSSEStream() async throws {
+        let (asyncBytes, _) = try await session.bytes(from: url)
+        dataTask = asyncBytes.task
+
+        var eventLabel:SSELine? = nil 
+
+        for try await line in asyncBytes.lines {
+            if !line.contains(":thump") && !(line == ":)") {
+                let decodedLine = try await SSELine(line)
+                
+                switch decodedLine.label {
+                    case "event":
+                        eventLabel = decodedLine
+                    case "data":
+                        guard let thisLabel = eventLabel else { throw APIngError("SSEStreamListener: No label for data") }
+                        accumulator.append(SSEStreamEvent(type:String(data:thisLabel.content, encoding:.utf8)!, data: decodedLine.content))
+                        eventLabel = nil
+                        print(accumulator.count, accumulator.last?.description ?? "")
+
+                default:
+                    eventLabel = nil
+                }       
+                
+            } 
+            else { eventLabel = nil }
+        }
+    }
+}
+
 //Based on "Use async/await with URLSession" WWDC21 session
 
 //Tested. 

@@ -171,12 +171,17 @@ public struct APIng {
         //     print(key, value)
         // }
 
-        // TESITING - RECEiVE EVENT STREAMS
+        // TESTING - RECEiVE EVENT STREAMS
 
         //Yes, receives stream. 
        // try await streamReceiverTest(streamURL:URL(string:"https://httpbin.org/get")!, session:URLSession.shared) 
-        try await streamReceiverTestWithManualHeader(streamURL:URL(string:"https://mastodon.social/api/v1/streaming/public")!, session:URLSession.shared) 
+        //try await streamReceiverTestWithManualHeader(streamURL:URL(string:"https://mastodon.social/api/v1/streaming/public")!, session:URLSession.shared) 
         // try await streamReceiverTestWithManualHeader(streamURL:URL(string:"https://httpbin.org/get")!, session:URLSession.shared) 
+
+        //TESTING - Turn on and off event stream
+        let url = URL(string:"https://mastodon.social/api/v1/streaming/public")!
+        let listener = SSEStreamListener(url: url, urlSession: URLSession.shared)
+        try listener.startListening()
 
      }
 }
