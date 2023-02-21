@@ -68,7 +68,7 @@ func test_funcCondition(timeOut:TimeInterval, url:URL, session:URLSession) async
             //session.invalidateAndCancel()
             print("trying to cancel...")
         } 
-        let bytesTask = asyncBytes.task
+        //let bytesTask = asyncBytes.task
         data.append(byte) 
         if data.count % 100 == 0 {
             print(data.count) 
