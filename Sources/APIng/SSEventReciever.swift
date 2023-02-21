@@ -36,6 +36,39 @@ public struct SSEStreamEvent:Hashable {
     }
 }
 
+
+//To return AsyncStream<[String:String]> see extension commented out below. 
+public func getSSEStream(url:URL) async throws -> some AsyncSequence {
+    // if streamService == nil { streamService = SSEListener(url: url) } else {
+    //     //TODO: Build in the ability to handle more than one stream. In SSEListener or MastodonServer or combined.
+    //     throw MastodonAPIError("Someone is already streaming...")
+    // }
+    let streamService = SSEListener(url: url)
+    return streamService.eventStream().map { event in
+            let mse: Dictionary<String, String> = [
+                "type" : event.message ?? "undefined",
+                    "data" : event.data ?? "empty"
+                    ]
+            return mse
+        }
+}
+
+// https://forums.swift.org/t/when-can-we-move-asyncsequence-forward/61991/2
+// extension AsyncStream {
+//   init<S: AsyncSequence>(_ sequence: S) where S.Element == Element {
+//     var iterator: S.AsyncIterator?
+//     self.init {
+//       if iterator == nil {
+//         iterator = sequence.makeAsyncIterator()
+//       }
+//       return try? await iterator?.next()
+//     }
+//   }
+// }
+
+
+
+
 enum SSEListenerError: Error, CustomStringConvertible {
     case message(String)
     public var description: String {
@@ -68,7 +101,7 @@ public class SSEListener: NSObject, URLSessionDataDelegate, URLSessionTaskDelega
     //private var cancelled = true
     
     private var connectionTime:Date?
-    private var rephreshInterval:TimeInterval?
+    private var refreshInterval:TimeInterval?
     
     
     //SPEC: When a stream is parsed, a data buffer, an event type buffer, and a last event ID buffer must be associated with it.
@@ -93,7 +126,7 @@ public class SSEListener: NSObject, URLSessionDataDelegate, URLSessionTaskDelega
         self.url = url
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 300.0)
         request.setValue("text/event-stream", forHTTPHeaderField:"Accept")
-        //request.setValue("no-cache", forHTTPHeaderField: "Cache-Control") //does this make a difference w/ Masotodon?
+        //request.setValue("no-cache", forHTTPHeaderField: "Cache-Control") //does this make a difference w/ Mastodon?
         self.urlRequest = request
         
         super.init()
@@ -111,7 +144,7 @@ public class SSEListener: NSObject, URLSessionDataDelegate, URLSessionTaskDelega
     }
     
 
-    //same as the task gotting back from .bytes
+    //same as the task getting back from .bytes
 //    public func urlSession(_ session: URLSession, didCreateTask task: URLSessionTask) {
 //        print("I made a task:\(task)")
 //        self.sessionTask = task
@@ -229,7 +262,7 @@ public class SSEListener: NSObject, URLSessionDataDelegate, URLSessionTaskDelega
                 print("stream comment: \(message)") //should maybe just ignore, but want to give option of retaining comment.
                 break
             case .dispatch:
-                if let sse = makeSSESrreamEvent(tryWith: mBuffer) {
+                if let sse = makeSSEStreamEvent(tryWith: mBuffer) {
                     //print(sse)
                     mBuffer["data"] = ""
                     mBuffer["event_type"] = ""
@@ -243,7 +276,7 @@ public class SSEListener: NSObject, URLSessionDataDelegate, URLSessionTaskDelega
     }
     
     
-    func makeSSESrreamEvent(tryWith tmp:[String:String]) -> SSEStreamEvent? {
+    func makeSSEStreamEvent(tryWith tmp:[String:String]) -> SSEStreamEvent? {
         //print(tmp)
         if tmp.isEmpty { return nil }
         if tmp.allSatisfy({ $1.isEmpty }) { return nil }
