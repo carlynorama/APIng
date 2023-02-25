@@ -26,6 +26,23 @@ func streamReceiverTest(streamURL:URL, session:URLSession)  async throws {
     }
 }
 
+func streamReceiverWithAuth(streamURL:URL, session:URLSession, withAuth:Bool)  async throws {
+    var request = URLRequest(url: streamURL)
+    if withAuth { addAuth(request: &request) }
+    let (bytes, response) = try await session.bytes(from:streamURL)
+    guard let httpResponse = response as? HTTPURLResponse else {
+        throw APIngError("Not an HTTPResponse")
+    } 
+    guard httpResponse.statusCode == 200 else {
+        throw APIngError("Not a success: \(httpResponse.statusCode)")
+    }
+
+    for try await line in bytes.lines {
+        print(line)
+        print()
+    }
+}
+
 
 
 func cancellableStreamReceiverTest(streamURL:URL, session:URLSession)  async throws {

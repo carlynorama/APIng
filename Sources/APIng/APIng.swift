@@ -104,17 +104,17 @@ public struct APIng {
         
     //---------------- CONFIRMED - NEW STATUS AS FORM DATA WORKS (BOTH METHODS)
     
-        // let statusEndpoint = Endpoint(path:"/api/v1/statuses", queryItems: [])
-        // let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
-        // //let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
-        // print("trying \(statusEndpointURL.absoluteString)")
+        let statusEndpoint = Endpoint(path:"/api/v1/statuses", queryItems: [])
+        //let statusEndpointURL = urlAssembler("http://localhost:8080", statusEndpoint.path)!
+        let statusEndpointURL = try urlFromEndpoint(host: ProcessInfo.processInfo.environment["SERVER_NAME"]!, endpoint: statusEndpoint)
+        print("trying \(statusEndpointURL.absoluteString)")
 
-        // let exampleBasicStatus = [
-        //     "status":"This is a really really interesting message. \(Date.now.ISO8601Format())"
-        // ]
+        let exampleBasicStatus = [
+            "status":"This is a really really interesting message. \(Date.now.ISO8601Format())"
+        ]
 
-        // try await post_FormBody_uploadFrom(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
-        // //try await post_FormBody_manualBody(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
+        try await post_FormBody_uploadFrom(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
+        //try await post_FormBody_manualBody(baseUrl:statusEndpointURL, formData:exampleBasicStatus, withAuth:true)
 
     //---------------- CONFIRMED - UPLOAD MEDIA FILE WORKS (BOTH METHODS)
     // Media uploads will fail if fileNames are not included on Form Data. 
@@ -175,13 +175,17 @@ public struct APIng {
 
         //Yes, receives stream. 
        // try await streamReceiverTest(streamURL:URL(string:"https://httpbin.org/get")!, session:URLSession.shared) 
-        //try await streamReceiverTestWithManualHeader(streamURL:URL(string:"https://mastodon.social/api/v1/streaming/public")!, session:URLSession.shared) 
+        // try await streamReceiverTestWithManualHeader(streamURL:URL(string:"https://mastodon.social/api/v1/streaming/public")!, session:URLSession.shared) 
         // try await streamReceiverTestWithManualHeader(streamURL:URL(string:"https://httpbin.org/get")!, session:URLSession.shared) 
 
         //TESTING - Turn on and off event stream
-        let url = URL(string:"https://mastodon.social/api/v1/streaming/public")!
-        let listener = SSEStreamListener(url: url, urlSession: URLSession.shared)
-        try listener.startListening()
+        // let url = URL(string:"https://mastodon.social/api/v1/streaming/public")!
+        // let listener = SSEStreamListener(url: url, urlSession: URLSession.shared)
+        // try listener.startListening()
+
+        //TESTING - Authed StreamListener
+        let url = URL(string:"https://social.cozytronics.com/api/v1/streaming/tipsyrobot/notification")!
+        try await streamReceiverWithAuth(streamURL: url, session: URLSession.shared, withAuth: true)
 
      }
 }
