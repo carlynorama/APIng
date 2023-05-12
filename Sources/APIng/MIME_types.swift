@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(UniformTypeIdentifiers)
 import UniformTypeIdentifiers
+#endif
 
 extension NSURL {
     public func mimeType() -> String {
@@ -28,11 +30,15 @@ extension URL {
     
     public func pointsToItemOfType(uttypes: [UTType]) -> Bool {
         guard let mytype = UTType(mimeType: self.mimeType()) else {
+            print("false")
             return false
         }
         for t in uttypes {
-            if mytype.conforms(to: t) { return true }
+            if mytype.conforms(to: t) { 
+                print("true")
+                return true }
         }
+        print("false")
         return false
         
     }
