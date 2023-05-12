@@ -1,8 +1,13 @@
 import Foundation
+
+//For Apple Platforms
+#if canImport(UniformTypeIdentifiers)
 import UniformTypeIdentifiers
+#endif
+
 
 func loadDataFromFile(path:String, limitTypes uttypes: [UTType] = [] ) throws -> (fileName:String, data:Data, mimeType:String) {
-    let url = URL(fileURLWithPath: path) 
+    let url = FileIO.makeFileURL(filePath:path)
     return try loadData(url:url, limitTypes:uttypes)
 }
 
@@ -16,6 +21,7 @@ func loadDataFromFile(path:String, limitTypes uttypes: [UTType] = [] ) throws ->
 //or use URL(fileURLWithPath: "small_test.png") initializer. 
 func loadData(url:URL, limitTypes uttypes: [UTType] = []) throws -> (fileName:String, data:Data, mimeType:String) {
         if !uttypes.isEmpty {
+            print("Test UTType Check")
             guard url.pointsToItemOfType(uttypes: uttypes) else {
                 throw APIngError("MinimalAttachable: Does not conform to allowed types.")
             }
